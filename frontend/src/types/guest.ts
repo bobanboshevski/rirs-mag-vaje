@@ -5,6 +5,7 @@ export interface Guest {
     email: string;
     phone: string;
     nationality: string;
+    countryCode: string;
     dateOfBirth?: string;
     idNumber?: string;
 
