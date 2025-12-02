@@ -1,0 +1,86 @@
+import {CalendarReservation} from "@/types/calendar";
+
+export async function getCalendarReservations(): Promise<CalendarReservation[]> {
+    // return await fetchFromApi("/dashboard/calendar", {
+    //     method: "GET"
+    // });
+    return [
+        {
+            id: "res_101",
+            guestName: "Sophie Laurent",
+            apartmentName: "Lakeview Apartment",
+            checkIn: "2025-10-15T14:00:00Z",
+            checkOut: "2025-10-20T10:00:00Z",
+            bookingStatus: "confirmed",
+            paymentStatus: "pending",
+            numberOfGuests: 2,
+            totalPrice: 525,
+        },
+        {
+            id: "res_102",
+            guestName: "Marco Rossi",
+            apartmentName: "Central City Loft",
+            checkIn: "2025-10-18T14:00:00Z",
+            checkOut: "2025-10-25T10:00:00Z",
+            bookingStatus: "confirmed",
+            paymentStatus: "paid",
+            numberOfGuests: 3,
+            totalPrice: 791.31,
+        },
+        {
+            id: "res_103",
+            guestName: "Anna Kowalski",
+            apartmentName: "Sunset Studio",
+            checkIn: "2025-10-22T14:00:00Z",
+            checkOut: "2025-10-25T10:00:00Z",
+            bookingStatus: "pending",
+            paymentStatus: "pending",
+            numberOfGuests: 1,
+            totalPrice: 250,
+        },
+        {
+            id: "res_104",
+            guestName: "David Chen",
+            apartmentName: "Garden View Suite",
+            checkIn: "2025-11-01T14:00:00Z",
+            checkOut: "2025-11-08T10:00:00Z",
+            bookingStatus: "confirmed",
+            paymentStatus: "pending",
+            numberOfGuests: 2,
+            totalPrice: 840,
+        },
+        {
+            id: "res_105",
+            guestName: "Lisa Anderson",
+            apartmentName: "Mountain View Retreat",
+            checkIn: "2025-10-20T14:00:00Z",
+            checkOut: "2025-10-23T10:00:00Z",
+            bookingStatus: "confirmed",
+            paymentStatus: "paid",
+            numberOfGuests: 4,
+            totalPrice: 360,
+        },
+        {
+            id: "res_106",
+            guestName: "James Wilson",
+            apartmentName: "Lakeview Apartment",
+            checkIn: "2025-10-25T14:00:00Z",
+            checkOut: "2025-10-28T10:00:00Z",
+            bookingStatus: "confirmed",
+            paymentStatus: "paid",
+            numberOfGuests: 2,
+            totalPrice: 315,
+        },
+        {
+            id: "res_107",
+            guestName: "Emma Johnson",
+            apartmentName: "Central City Loft",
+            checkIn: "2025-11-05T14:00:00Z",
+            checkOut: "2025-11-12T10:00:00Z",
+            bookingStatus: "confirmed",
+            paymentStatus: "pending",
+            numberOfGuests: 2,
+            totalPrice: 793.31,
+        },
+    ];
+}
