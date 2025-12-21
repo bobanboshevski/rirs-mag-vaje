@@ -9,7 +9,6 @@
 		"dev": "next dev --turbo",
 		"build": "next build",
 		"start": "next start",
-		"prepare": "pnpm husky",
 		"test": "jest --coverage --passWithNoTests",
 		"test:watch": "jest --watch"
 	},
