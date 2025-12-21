@@ -1,7 +1,6 @@
 import Home from '@/app/page';
 import {redirect} from 'next/navigation';
 
-// Mock Next.js redirect
 jest.mock('next/navigation', () => ({
     redirect: jest.fn(),
 }));

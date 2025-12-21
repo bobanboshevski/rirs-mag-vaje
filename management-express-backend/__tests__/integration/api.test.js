@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../../app');
-
+// unit tests
 describe('API Integration Tests', () => {
     describe('GET /test', () => {
         it('should return test message', async () => {

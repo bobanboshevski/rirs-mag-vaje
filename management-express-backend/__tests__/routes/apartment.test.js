@@ -1,7 +1,7 @@
 const request = require('supertest');
 const express = require('express');
 const apartmentsRouter = require('../../routes/apartments');
-
+// integration tests, api/route tests
 const app = express();
 app.use('/apartments', apartmentsRouter);
 

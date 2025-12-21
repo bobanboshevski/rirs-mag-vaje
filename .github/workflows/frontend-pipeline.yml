@@ -1,0 +1,84 @@
+name: Frontend CI
+on:
+  push:
+    branches: [ master, pre-production, prodution ]
+  pull_request:
+    branches: [ master, pre-production, production ]
+
+jobs:
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+        # TODO: CHECK THE MEANING OF THIS
+        # We dont cache the ~/.npm ? ?
+      - name: Cache node modules (dependencies)
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-node- # fallback mechanism to pick the closest match
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci # npm install --ignore-scripts
+        # ci don't just remove the node_modules folder and installs the dependencies again??
+        # What's the point that we cache that.
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Upload frontend build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/build/
+
+# TODO: next run frontend tests
+  test-frontend:
+    name: Test Frontend
+    needs: build-frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: Cache node modules (dependencies)
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-node-
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install #ci
+
+      - name: Run frontend tests
+        working-directory: frontend
+        run: npm run test --coverage --watchAll=false
+
+      - name: Upload frontend coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          path: frontend/coverage/
+          name: frontend-coverage
+
+
+
