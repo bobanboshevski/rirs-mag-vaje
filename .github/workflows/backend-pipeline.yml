@@ -35,6 +35,10 @@ jobs:
         working-directory: management-express-backend
         run: npm install #ci
 
+      - name: Build backend
+        working-directory: management-express-backend
+        run: npm run build
+
       - name: Upload backend build artifact
         uses: actions/upload-artifact@v4
         with:
@@ -74,13 +78,14 @@ jobs:
 
       - name : Run backend tests
         working-directory: management-express-backend
-        run: npm run test --coverage
+        run: npm run test # -- --coverage
 
       - name: Upload backend coverage report
         uses: actions/upload-artifact@v4
         with:
-          path: management-express-backend/coverage/
           name: backend-coverage
+          path: management-express-backend/coverage/
+
         
         
         
