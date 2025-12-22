@@ -30,7 +30,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm ci # npm install --ignore-scripts
+        run: npm install #ci # npm install --ignore-scripts
         # ci don't just remove the node_modules folder and installs the dependencies again??
         # What's the point that we cache that.
 
