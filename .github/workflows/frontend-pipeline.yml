@@ -38,11 +38,14 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+      - name: List frontend directory (debug)
+        run: ls -la frontend/
+
       - name: Upload frontend build artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
-          path: frontend/.next/
+          path: frontend/.next
 
 # TODO: next run frontend tests
   test-frontend:
