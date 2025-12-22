@@ -30,7 +30,7 @@ COPY --from=builder /app/node_modules ./node_modules
 EXPOSE 3000
 CMD ["npm", "start"]
 
-# docker build -t frontend-app ./frontend
-# docker run -p 3000:3000 frontend-app
+# docker build -t rirs-frontend-app ./frontend
+# docker run -p 3000:3000 rirs-frontend-app
 
 
