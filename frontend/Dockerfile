@@ -11,12 +11,17 @@ RUN npm ci
 
 # copy from source to /app
 COPY . .
+
+
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 RUN npm run build
 
 # =========================
 # 2) Production runtime
 # =========================
-from node:20-alpine as runner
+FROM node:20-alpine as runner
 
 WORKDIR /app
 ENV NODE_ENV=production

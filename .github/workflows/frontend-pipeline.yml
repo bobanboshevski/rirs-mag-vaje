@@ -109,7 +109,7 @@ jobs:
       - name: Build Docker image
         #        uses: docker/build-push-action@v3
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/rirs-frontend:dev ./frontend
+          docker build --build-arg NEXT_PUBLIC_API_URL=${{ secrets.BACKEND_API_URL }} -t ${{ secrets.DOCKER_USERNAME }}/rirs-frontend:dev ./frontend
           docker tag ${{ secrets.DOCKER_USERNAME }}/rirs-frontend:dev ${{ secrets.DOCKER_USERNAME }}/rirs-frontend:${{ github.sha }}
       #          -t ${{ secrets.DOCKER_USERNAME }}/frontend-app:${{ github.ref_name }}
 
