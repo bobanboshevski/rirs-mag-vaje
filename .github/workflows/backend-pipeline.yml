@@ -144,7 +144,9 @@ jobs:
           npx vercel --prod=false --confirm \
             --token $VERCEL_TOKEN \
             --name rirs-backend-dev \
-            --env NODE_ENV=development
+            --env NODE_ENV=development \
+            --build-command "" \
+#            --output-directory .
 
 #  deploy-to-firebase:
 #    name: Deploy to Firebase
