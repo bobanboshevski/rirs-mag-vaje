@@ -65,11 +65,14 @@ jobs:
           echo "=== Current working directory ==="
           pwd
 
+      - name: Rename .next to next-build (workaround for hidden dir)
+        run: mv frontend/.next frontend/next-build
+
       - name: Upload frontend build artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
-          path: frontend/.next
+          path: frontend/next-build
           if-no-files-found: error
 
   # TODO: next run frontend tests
