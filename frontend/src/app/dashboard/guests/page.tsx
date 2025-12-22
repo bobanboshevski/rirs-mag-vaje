@@ -9,7 +9,7 @@ import {useEffect, useState} from "react";
 import {Guest, GuestStats} from "@/types/guest";
 
 
-export default async function GuestsPage() {
+export default function GuestsPage() {
     // const guests = await getGuests();
     // const stats = await getGuestStats(guests);
 

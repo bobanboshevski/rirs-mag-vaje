@@ -1,32 +1,51 @@
-// app/admin/reservations/past/page.tsx
-// export default function PastReservationsPage() {
-//     return (
-//         <div>
-//             <h2 className="text-xl font-semibold mb-4">Past Reservations</h2>
-//             <p className="text-neutral-500">History of previous reservations.</p>
-//         </div>
-//     );
-// }
-
+"use client";
 
 import {getPastReservations} from "@/services/dashboard/reservations";
 import {Reservation} from "@/types/reservation";
 import {differenceInDays, format} from "date-fns";
+import {useEffect, useState} from "react";
 
-export default async function PastReservationsPage() {
-    let reservations: Reservation[] = [];
+export default function PastReservationsPage() {
+    // let reservations: Reservation[] = [];
+    const [reservations, setReservations] = useState<Reservation[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    try {
-        reservations = await getPastReservations();
-    } catch (error) {
-        console.error("Failed to fetch past reservations:", error);
-        return (
-            <div className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Past Reservations</h2>
-                <p className="text-red-500">Failed to load reservations. Please try again later.</p>
-            </div>
-        );
-    }
+    // try {
+    //     reservations = await getPastReservations();
+    // } catch (error) {
+    //     console.error("Failed to fetch past reservations:", error);
+    //     return (
+    //         <div className="p-6">
+    //             <h2 className="text-xl font-semibold mb-4">Past Reservations</h2>
+    //             <p className="text-red-500">Failed to load reservations. Please try again later.</p>
+    //         </div>
+    //     );
+    // }
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const data = await getPastReservations();
+                setReservations(data);
+            } catch (err: any) {
+                console.error("Failed to fetch past reservations:", err);
+                setError("Failed to load reservations. Please try again later.");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchData();
+    }, []);
+
+    if (loading) return <div className="p-6">Loading past reservations...</div>;
+    if (error) return (
+        <div className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Past Reservations</h2>
+            <p className="text-red-500">{error}</p>
+        </div>
+    );
 
     return (
         <div className="w-full">
@@ -91,38 +110,3 @@ export default async function PastReservationsPage() {
         </div>
     );
 }
-
-
-
-// import { getApartments } from "@/services/dashboard/apartments";
-// import {ApartmentsList} from "@/app/(store)/dashboard/components/ApartmentsList";
-
-
-// export default async function ApartmentsPage() {
-//     let apartments = [];
-//
-//     try {
-//         apartments = await getApartments();
-//     } catch (error) {
-//         console.error("Failed to fetch apartments:", error);
-//         return (
-//             <div>
-//                 <h2 className="text-2xl font-bold mb-2">Apartments</h2>
-//                 <p className="text-red-500">Failed to load apartments. Please try again later.</p>
-//             </div>
-//         );
-//     }
-//
-//     return (
-//         <div className="w-full">
-//             <div className="flex justify-between items-center mb-6">
-//                 <div>
-//                     <h2 className="text-2xl font-bold mb-2">Apartments</h2>
-//                     <p className="text-neutral-500">Manage all apartments in your building.</p>
-//                 </div>
-//             </div>
-//
-//             <ApartmentsList initialApartments={apartments} />
-//         </div>
-//     );
-// }
