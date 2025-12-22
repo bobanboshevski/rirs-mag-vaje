@@ -35,8 +35,12 @@ jobs:
         # What's the point that we cache that.
 
       - name: Build frontend
-        working-directory: frontend
-        run: npm run build
+        run: |
+          cd frontend
+          npm run build
+
+        # working-directory: frontend
+        # run: npm run build
 
       - name: List frontend directory (debug)
         run: ls -la frontend/
@@ -47,7 +51,7 @@ jobs:
           name: frontend-build
           path: frontend/.next/**
 
-# TODO: next run frontend tests
+  # TODO: next run frontend tests
   test-frontend:
     name: Test Frontend
     needs: build-frontend
