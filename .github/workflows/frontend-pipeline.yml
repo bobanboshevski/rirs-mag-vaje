@@ -35,20 +35,42 @@ jobs:
         # What's the point that we cache that.
 
       - name: Build frontend
-#        run: |
-#          cd frontend
-#          npm run build
+        #        run: |
+        #          cd frontend
+        #          npm run build
         working-directory: frontend
         run: npm run build
 
       - name: List frontend directory (debug)
         run: ls -la frontend/
 
+      - name: Debug - Check .next directory
+        run: |
+          echo "=== Listing frontend directory ==="
+          ls -la frontend/
+          echo ""
+          echo "=== Checking if .next exists ==="
+          if [ -d "frontend/.next" ]; then
+            echo ".next directory EXISTS"
+            echo ""
+            echo "=== Contents of .next directory ==="
+            ls -la frontend/.next/
+            echo ""
+            echo "=== Finding files in .next ==="
+            find frontend/.next -type f | head -20
+          else
+            echo ".next directory DOES NOT EXIST"
+          fi
+          echo ""
+          echo "=== Current working directory ==="
+          pwd
+
       - name: Upload frontend build artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
           path: frontend/next
+          if-no-files-found: error
 
   # TODO: next run frontend tests
   test-frontend:
