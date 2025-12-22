@@ -6,7 +6,9 @@ const indexRoutes = require('./routes/index.js');
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:3000', 'https://rirs-backend-dev.onrender.com'],
+}));
 app.use(express.json());
 app.use(morgan('dev'));
 

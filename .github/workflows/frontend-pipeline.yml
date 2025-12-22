@@ -117,5 +117,17 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/rirs-frontend:dev
           docker push ${{ secrets.DOCKER_USERNAME }}/rirs-frontend:${{ github.sha }}
+
+  deploy-to-render:
+    name: Deploy to Render
+    needs: docker-build-push
+    runs-on: ubuntu-latest
+    environment: Development
+    #    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Deploy to Render
+        run: |
+          curl -X POST ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK_URL }}
             
           
