@@ -5,6 +5,7 @@ on:
   pull_request:
     branches: [ master, pre-production, production ]
 
+
 jobs:
   build-backend:
     name: Build Backend
@@ -115,38 +116,54 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/rirs-backend:dev
           docker push ${{ secrets.DOCKER_USERNAME }}/rirs-backend:${{ github.sha }}
 
-  deploy-to-vercel:
-    name: Deploy to Vercel
+  deploy-to-render:
+    name: Deploy to Render
     needs: docker-build-push
     runs-on: ubuntu-latest
     environment: Development
     #    if: github.ref == 'refs/heads/master'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with: { node-version: '20' }
-
-      - name: Install Vercel CLI
-        run: npm install -g vercel
-
-      - name: Deploy to Vercel
-        working-directory: management-express-backend
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        #          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-        #          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        #        run: vercel --prod --confirm
+      - name: Deploy to Render
         run: |
-          npx vercel --prod=false --confirm \
-            --token $VERCEL_TOKEN \
-            --name rirs-backend-dev \
-            --env NODE_ENV=development \
-            --build-command "" \
-#            --output-directory .
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+
+
+
+
+
+#  deploy-to-vercel:
+#    name: Deploy to Vercel
+#    needs: docker-build-push
+#    runs-on: ubuntu-latest
+#    environment: Development
+#    #    if: github.ref == 'refs/heads/master'
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Setup Node.js
+#        uses: actions/setup-node@v4
+#        with: { node-version: '20' }
+#
+#      - name: Install Vercel CLI
+#        run: npm install -g vercel
+#
+#      - name: Deploy to Vercel
+#        working-directory: management-express-backend
+#        env:
+#          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+#        #          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+#        #          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+#        #        run: vercel --prod --confirm
+#        run: |
+#          npx vercel --prod=false --confirm \
+#            --token $VERCEL_TOKEN \
+#            --name rirs-backend-dev \
+#            --env NODE_ENV=development \
+#            --build-command "" \
+##            --output-directory .
 
 #  deploy-to-firebase:
 #    name: Deploy to Firebase
