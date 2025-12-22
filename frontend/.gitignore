@@ -12,7 +12,6 @@ src/gql/
 /coverage
 
 # next.js
-/.next/
 /out/
 
 # production
