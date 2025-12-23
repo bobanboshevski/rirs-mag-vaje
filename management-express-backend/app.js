@@ -7,7 +7,12 @@ const app = express();
 
 // Middlewares
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://rirs-frontend-dev.onrender.com'],
+    // We can also have this in env file
+    origin: [
+        'http://localhost:3000',
+        'https://rirs-frontend-dev.onrender.com',
+        'https://rirs-frontend-prod.onrender.com'
+    ],
 }));
 app.use(express.json());
 app.use(morgan('dev'));

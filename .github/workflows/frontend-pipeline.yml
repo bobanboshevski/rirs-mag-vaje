@@ -90,7 +90,7 @@ jobs:
           name: frontend-coverage
 
   docker-build-push:
-    name: Build and push Docker image
+    name: Build and push Docker image to Development
     needs: test-frontend
     runs-on: ubuntu-latest
     environment: Development
@@ -137,7 +137,7 @@ jobs:
 
 
   deploy-to-render:
-    name: Deploy to Render
+    name: Deploy to Render Development
     needs: docker-build-push
     runs-on: ubuntu-latest
     environment: Development
