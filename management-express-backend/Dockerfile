@@ -13,9 +13,10 @@ RUN npm ci --omit=dev
 
 COPY . .
 
-ENV NODE_ENV = production
+ENV NODE_ENV=production
 
-expose 3002
+expose 10000
+#3002
 
 CMD ["npm", "start"]
 
