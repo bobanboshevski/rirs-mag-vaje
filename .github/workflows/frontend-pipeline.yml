@@ -94,7 +94,7 @@ jobs:
     needs: test-frontend
     runs-on: ubuntu-latest
     environment: Development
-    #    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' # runs only on master branch when push event is triggered
 
     steps:
       - name: Checkout code
@@ -141,7 +141,7 @@ jobs:
     needs: docker-build-push
     runs-on: ubuntu-latest
     environment: Development
-    #    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
 
     steps:
       - name: Deploy to Render
@@ -154,8 +154,8 @@ jobs:
     name: Deploy to GitHub Pages
     needs: test-frontend
     runs-on: ubuntu-latest
-    #    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    #    if: github.ref == 'refs/heads/master'
     permissions:
       contents: write
     steps:
