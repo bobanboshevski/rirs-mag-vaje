@@ -1,56 +1,3 @@
-// "use client";
-//
-// import { DailyRevenueDataPoint } from "@/types/dashboardOverview";
-// import { TrendingUp } from "lucide-react";
-//
-// type Props = {
-//     data: DailyRevenueDataPoint[];
-// };
-//
-// export function WeeklyRevenueChart({ data }: Props) {
-//     const maxRevenue = Math.max(...data.map((d) => d.revenue));
-//     const totalWeekRevenue = data.reduce((sum, d) => sum + d.revenue, 0);
-//
-//     return (
-//         <div className="bg-white rounded-lg border border-neutral-200 p-6 shadow-sm">
-//             <div className="flex items-center justify-between mb-6">
-//                 <div>
-//                     <h3 className="text-lg font-semibold text-neutral-900">Last 7 Days Revenue</h3>
-//                     <p className="text-sm text-neutral-500">
-//                         Total: €{totalWeekRevenue.toLocaleString()}
-//                     </p>
-//                 </div>
-//                 <TrendingUp className="h-5 w-5 text-neutral-400" />
-//             </div>
-//
-//             <div className="flex items-end justify-between gap-2 h-48">
-//                 {data.map((item) => {
-//                     const heightPercent = (item.revenue / maxRevenue) * 100;
-//                     return (
-//                         <div key={item.day} className="flex-1 flex flex-col items-center gap-2">
-//                             <div className="w-full flex flex-col items-center">
-//                 <span className="text-xs font-semibold text-neutral-900 mb-1">
-//                   €{item.revenue}
-//                 </span>
-//                                 <div
-//                                     className="w-full bg-gradient-to-t from-green-500 to-green-400 rounded-t-lg hover:from-green-600 hover:to-green-500 transition-all cursor-pointer"
-//                                     style={{ height: `${Math.max(heightPercent, 10)}%` }}
-//                                     title={`€${item.revenue} from ${item.bookings} bookings`}
-//                                 />
-//                             </div>
-//                             <div className="text-center">
-//                                 <p className="text-xs font-medium text-neutral-700">{item.day}</p>
-//                                 <p className="text-xs text-neutral-500">{item.date}</p>
-//                             </div>
-//                         </div>
-//                     );
-//                 })}
-//             </div>
-//         </div>
-//     );
-// }
-
-
 // app/(store)/dashboard/components/WeeklyRevenueChart.tsx
 "use client";
 
@@ -62,6 +9,8 @@ type Props = {
 };
 
 export function WeeklyRevenueChart({data}: Props) {
+    if (!data.length) return <div>No data available</div>;
+
     const maxRevenue = Math.max(...data.map((d) => d.revenue));
     const minRevenue = Math.min(...data.map((d) => d.revenue));
     const totalWeekRevenue = data.reduce((sum, d) => sum + d.revenue, 0);
@@ -84,10 +33,16 @@ export function WeeklyRevenueChart({data}: Props) {
     // Create path for the line
     const linePath = points.map((point, i) => (i === 0 ? `M ${point.x} ${point.y}` : `L ${point.x} ${point.y}`)).join(" ");
 
+    const lastPoint = points[points.length - 1];
+
+    if (!lastPoint) return <div>No data available</div>;
+
+    const areaPath = `${linePath} L ${lastPoint.x} ${chartHeight - padding} L ${padding} ${chartHeight - padding} Z`;
+
     // Create path for the gradient area (below the line)
-    const areaPath = `${linePath} L ${points[points.length - 1].x} ${chartHeight - padding} L ${padding} ${
-        chartHeight - padding
-    } Z`;
+    // const areaPath = `${linePath} L ${points[points.length - 1].x} ${chartHeight - padding} L ${padding} ${
+    //     chartHeight - padding
+    // } Z`;
 
     return (
         <div className="bg-white rounded-lg border border-neutral-200 p-6 shadow-sm">

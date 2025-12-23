@@ -24,20 +24,20 @@ export function IncomeSection({payments}: Props) {
         }
     };
 
-    const getMethodIcon = (method: string) => {
-        switch (method) {
-            case "card":
-                return "💳";
-            case "cash":
-                return "💵";
-            case "bank-transfer":
-                return "🏦";
-            case "online":
-                return "💻";
-            default:
-                return "💰";
-        }
-    };
+    // const getMethodIcon = (method: string) => {
+    //     switch (method) {
+    //         case "card":
+    //             return "💳";
+    //         case "cash":
+    //             return "💵";
+    //         case "bank-transfer":
+    //             return "🏦";
+    //         case "online":
+    //             return "💻";
+    //         default:
+    //             return "💰";
+    //     }
+    // };
 
     const totalIncome = payments
         .filter((p) => p.status === "completed")
@@ -78,7 +78,13 @@ export function IncomeSection({payments}: Props) {
                                 <span className="text-lg">{(payment.method)}</span>
                             </td>
                             <td className="px-6 py-4 font-semibold whitespace-nowrap">€{payment.amount.toFixed(2)}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{format(new Date(payment.paymentDate), "dd MMM yyyy")}</td>
+                            {/*<td className="px-6 py-4 whitespace-nowrap">{format(new Date(payment.paymentDate), "dd MMM yyyy")}</td>*/}
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                {payment.paymentDate
+                                    ? format(new Date(payment.paymentDate), "dd MMM yyyy")
+                                    : "-"}
+                            </td>
+
                             <td className="px-6 py-4 whitespace-nowrap">
                   <span
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getStatusColor(payment.status)}`}>
