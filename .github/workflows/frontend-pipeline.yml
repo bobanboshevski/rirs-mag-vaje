@@ -147,7 +147,52 @@ jobs:
       - name: Deploy to Render
         run: |
           curl -X POST ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK_URL }}
-  
+
+  docker-build-push-prod:
+    name: Build and push Docker image to Production
+    needs: [ test-frontend ]
+    runs-on: ubuntu-latest
+    environment: Production
+    if: github.ref == 'refs/heads/production'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx for caching
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image with Docker Buildx (caching)
+        uses: docker/build-push-action@v3
+        with:
+          context: frontend
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/rirs-frontend:prod
+            ${{ secrets.DOCKER_USERNAME }}/rirs-frontend:${{ github.sha }}
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ secrets.BACKEND_API_URL }}
+          # it takes the build-args from the Production environment
+          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/rirs-frontend:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/rirs-frontend:buildcache,mode=max
+
+  deploy-to-render-prod:
+    name: Deploy to Render Production
+    needs: docker-build-push-prod
+    runs-on: ubuntu-latest
+    environment: Production
+    if: github.ref == 'refs/heads/production'
+
+    steps:
+      - name: Deploy to Render Production
+        run: |
+          curl -X POST ${{ secrets.RENDER_PRODUCTION_FRONTEND_DEPLOY_HOOK_URL }}
 
   # GitHub pages
   deploy-pages:
