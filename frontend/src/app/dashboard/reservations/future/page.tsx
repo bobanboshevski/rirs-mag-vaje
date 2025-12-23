@@ -1,13 +1,4 @@
-// app/admin/reservations/future/page.tsx
-// export default function FutureReservationsPage() {
-//     return (
-//         <div>
-//             <h2 className="text-xl font-semibold mb-4">Future Reservations</h2>
-//             <p className="text-neutral-500">List of all upcoming reservations.</p>
-//         </div>
-//     );
-// }
-
+"use client";
 
 // ============================================
 // app/admin/reservations/future/page.tsx
@@ -17,21 +8,43 @@ import {getFutureReservations} from "@/services/dashboard/reservations";
 import {Reservation} from "@/types/reservation";
 import {differenceInDays, format} from "date-fns";
 import {AlertCircle, CheckCircle, Clock} from "lucide-react";
+import {useEffect, useState} from "react";
 
-export default async function FutureReservationsPage() {
-    let reservations: Reservation[] = [];
+export default function FutureReservationsPage() {
+    // let reservations: Reservation[] = [];
 
-    try {
-        reservations = await getFutureReservations();
-    } catch (error) {
-        console.error("Failed to fetch future reservations:", error);
-        return (
-            <div className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Future Reservations</h2>
-                <p className="text-red-500">Failed to load reservations. Please try again later.</p>
-            </div>
-        );
-    }
+    const [reservations, setReservations] = useState<Reservation[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    // try {
+    //     reservations = await getFutureReservations();
+    // } catch (error) {
+    //     console.error("Failed to fetch future reservations:", error);
+    //     return (
+    //         <div className="p-6">
+    //             <h2 className="text-xl font-semibold mb-4">Future Reservations</h2>
+    //             <p className="text-red-500">Failed to load reservations. Please try again later.</p>
+    //         </div>
+    //     );
+    // }
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const data = await getFutureReservations();
+                setReservations(data);
+            } catch (err: any) {
+                console.error("Failed to fetch future reservations:", err);
+                setError("Failed to load reservations. Please try again later.");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchData();
+    }, []);
+
 
     const getBookingStatusColor = (status: string) => {
         switch (status) {
@@ -69,6 +82,14 @@ export default async function FutureReservationsPage() {
             return <CheckCircle className="h-4 w-4 text-green-600"/>;
         }
     };
+
+    if (loading) return <div className="p-6">Loading reservations...</div>;
+    if (error) return (
+        <div className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Future Reservations</h2>
+            <p className="text-red-500">{error}</p>
+        </div>
+    );
 
     return (
         // w-full

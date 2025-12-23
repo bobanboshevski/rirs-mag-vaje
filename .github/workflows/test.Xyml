@@ -1,0 +1,69 @@
+name: Run Frontend and Backend Tests
+
+on:
+  push:
+    branches: [ master, pre-production, production ]
+
+  pull_request:
+    branches: [ master, pre-production, production ]
+
+
+jobs:
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+
+    #    defaults:
+    #      run:
+    #        working-directory: ./frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install --ignore-scripts
+
+      - name: Run frontend tests with coverage
+        working-directory: frontend
+        run: npm test -- --coverage --watchAll=false
+
+      - name: Upload frontend coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend/coverage/
+
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    needs: [ frontend-tests ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: Install backend dependencies
+        working-directory: management-express-backend
+        run: npm install
+
+      - name: Run backend tests with coverage
+        working-directory: management-express-backend
+        run: npm test -- --coverage
+
+      - name: Upload backend coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: management-express-backend/coverage/
+
+

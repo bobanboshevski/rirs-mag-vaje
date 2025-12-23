@@ -19,6 +19,8 @@ export function RecentActivity({ activities }: Props) {
                 return Wrench;
             case "cancellation":
                 return XCircle;
+            default:
+                return Calendar; // safe fallback (should never happen)
         }
     };
 

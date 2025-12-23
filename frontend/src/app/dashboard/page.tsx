@@ -1,19 +1,3 @@
-// app/admin/page.tsx
-
-
-// import DashboardCard from "@/app/(store)/dashboard/components/DashboardCard";
-//
-// export default function AdminDashboard() {
-//     return (
-//         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//             <DashboardCard title="Total Apartments" value="24" />
-//             <DashboardCard title="Future Reservations" value="12" />
-//             <DashboardCard title="Past Reservations" value="48" />
-//         </div>
-//     );
-// }
-
-
 import {getDashboardStats} from "@/services/dashboard/stats";
 import {StatsCards} from "@/app/dashboard/components/StatsCards";
 import {RevenueChart} from "@/app/dashboard/components/RevenueChart";

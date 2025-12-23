@@ -1,51 +1,3 @@
-// // app/admin/components/DashboardSidebar.tsx
-// "use client";
-//
-// import Link from "next/link";
-// import {usePathname} from "next/navigation";
-// import {Home, Building2, CalendarClock, CalendarCheck} from "lucide-react";
-//
-// const navItems = [
-//     {label: "Apartments", href: "/dashboard/apartments", icon: Building2},
-//     {label: "Future Reservations", href: "/dashboard/reservations/future", icon: CalendarClock},
-//     {label: "Past Reservations", href: "/dashboard/reservations/past", icon: CalendarCheck},
-// ];
-//
-// export default function DashboardSidebar() {
-//     const pathname = usePathname();
-//
-//     return (
-//
-//         <aside className="w-64 border-neutral-200 bg-neutral-900 p-4 fixed inset-y-0 left-0">
-//
-//             <div className="px-6 py-6 border-b border-neutral-200">
-//                 <Link href="/dashboard">
-//                     <h2 className="text-xl pt-8 mb-8 font-bold text-white">Admin Dashboard</h2>
-//                 </Link>
-//             </div>
-//             <nav className="flex-1 px-4 py-4 space-y-2">
-//                 {navItems.map(({label, href, icon: Icon}) => {
-//                     const active = pathname.startsWith(href);
-//                     return (
-//                         <Link
-//                             key={href}
-//                             href={href}
-//                             className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-colors ${
-//                                 active
-//                                     ? "bg-neutral-800 text-white"
-//                                     : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
-//                             }`}
-//                         >
-//                             <Icon className="h-5 w-5"/>
-//                             {label}
-//                         </Link>
-//                     );
-//                 })}
-//             </nav>
-//         </aside>
-//     );
-// }
-
 // app/admin/components/DashboardSidebar.tsx
 "use client";
 
@@ -67,12 +19,26 @@ import {
     Calendar,
     ClipboardList,
     Home,
-    LogOut
+    LogOut, LucideIcon
 } from "lucide-react";
 
-const navItems = [
-    { label: "Overview", href: "/dashboard", icon: LayoutDashboard, exact: true },
 
+type NavLinkItem = {
+    label: string;
+    href: string;
+    icon: LucideIcon;
+    exact?: boolean;
+};
+
+type NavSectionItem = {
+    section: string;
+    items: NavLinkItem[];
+};
+
+type NavItem = NavLinkItem | NavSectionItem;
+
+const navItems: NavItem[] = [
+    { label: "Overview", href: "/dashboard", icon: LayoutDashboard, exact: true },
     // Core Management
     {
         section: "Management",
@@ -82,7 +48,6 @@ const navItems = [
             { label: "Guests", href: "/dashboard/guests", icon: Users },
         ]
     },
-
     // Reservations Breakdown
     {
         section: "Bookings",
@@ -92,7 +57,6 @@ const navItems = [
             { label: "Calendar View", href: "/dashboard/calendar", icon: Calendar },
         ]
     },
-
     // Financial
     {
         section: "Financial",
@@ -102,7 +66,6 @@ const navItems = [
             { label: "Reports", href: "/dashboard/reports", icon: BarChart3 },
         ]
     },
-
     // Operations
     {
         section: "Operations",
@@ -113,7 +76,6 @@ const navItems = [
             { label: "Notifications", href: "/dashboard/notifications", icon: Bell },
         ]
     },
-
     // Settings
     {
         section: "System",
