@@ -148,9 +148,42 @@ jobs:
         run: |
           curl -X POST ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK_URL }}
 
+  sonar-cloud-analysis:
+    needs: test-frontend
+    runs-on: ubuntu-latest
+    #    environment: Development
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/production'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Upload frontend coverage report
+        run: |
+          cp frontend/coverage/lcov.info .
+
+      - name: Run SonarCloud Scan analysis
+        uses: sonarsource/sonarcloud-github-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+        # QUALITY GATE CHECK
+      - name: SonarCloud Quality Gate Check
+        uses: sonarsource/sonarcloud-quality-gate-action@master
+        timeout-minutes: 5
+
+
   docker-build-push-prod:
     name: Build and push Docker image to Production
-    needs: [ test-frontend ]
+    needs: [ test-frontend, sonar-cloud-analysis ]
     runs-on: ubuntu-latest
     environment: Production
     if: github.ref == 'refs/heads/production'
