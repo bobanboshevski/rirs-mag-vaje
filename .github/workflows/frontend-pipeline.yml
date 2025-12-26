@@ -166,12 +166,21 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      - name: Collect coverage
+        working-directory: frontend
+        run: npm run test:ci -- --coverage
+        #        run: |
+        #          cd 04_DevOps_Deploying/primer/frontend
+        #          npm run test:ci -- --coverage
+        env:
+          CI: true
+
       - name: Upload frontend coverage report
         run: |
           cp frontend/coverage/lcov.info .
 
       - name: Run SonarCloud Scan analysis
-        uses: sonarsource/sonarcloud-github-action@v4
+        uses: sonarsource/sonarcloud-github-action@v5 # v4
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 

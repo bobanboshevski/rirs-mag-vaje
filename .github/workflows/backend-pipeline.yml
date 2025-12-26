@@ -144,6 +144,9 @@ jobs:
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
   
 
+  # todo: we should only add quality gate check to master branch for the backend
+  # because we already have code analysis in the frontend pipeline for the whole project
+
 #    sonar-cloud-scan-analysis:
 #      needs: test-backend
 #      runs-on: ubuntu-latest
