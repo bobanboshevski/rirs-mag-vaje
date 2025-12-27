@@ -5,6 +5,12 @@ on:
   pull_request:
     branches: [ master, pre-production, production ]
 
+  # waiting for the frontend pipeline to finish
+  workflow_run:
+    workflows: [ "Frontend CI" ]
+    branches: [ master, production ]
+    types: [ completed ]
+
 
 jobs:
   build-backend:
@@ -150,7 +156,10 @@ jobs:
     name: Backend - SonarCloud Quality Gate Check
     needs: test-backend
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/production'
+    #    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/production'
+    if: |
+      (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/production') &&
+      (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
 
     steps:
       - name: Checkout repository
@@ -158,25 +167,25 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with: { node-version: '20' }
-
-      - name: Install backend dependencies
-        working-directory: management-express-backend
-        run: npm ci # todo: think about this: ci or install? we already cache dependencies
-
-      - name: Run backend tests with coverage
-        working-directory: management-express-backend
-        run: npm run test:coverage
-
-      - name: Upload backend coverage report
-        run: cp management-express-backend/coverage/lcov.info .
-
-      - name: SonarCloud Scan analysis (backend coverage)
-        uses: sonarsource/sonarcloud-github-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #      - name: Setup Node.js
+      #        uses: actions/setup-node@v4
+      #        with: { node-version: '20' }
+      #
+      #      - name: Install backend dependencies
+      #        working-directory: management-express-backend
+      #        run: npm ci # todo: think about this: ci or install? we already cache dependencies
+      #
+      #      - name: Run backend tests with coverage
+      #        working-directory: management-express-backend
+      #        run: npm run test:coverage
+      #
+      #      - name: Upload backend coverage report
+      #        run: cp management-express-backend/coverage/lcov.info .
+      #
+      #      - name: SonarCloud Scan analysis (backend coverage)
+      #        uses: sonarsource/sonarcloud-github-action@v5
+      #        env:
+      #          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: SonarCloud Quality Gate Check
         uses: sonarsource/sonarqube-quality-gate-action@v1
@@ -255,15 +264,4 @@ jobs:
       - name: Deploy to Render Production
         run: |
           curl -X POST ${{ secrets.RENDER_PROD_DEPLOY_HOOK_URL }}
-
-
-
-
-
-
-
-
-
-
-
 
