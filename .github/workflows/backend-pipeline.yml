@@ -1,7 +1,7 @@
 name: Backend CI
 on:
   push:
-    branches: [ master, pre-production, production ]
+    branches: [ pre-production, production ] # todo: i need to remove master from push
   pull_request:
     branches: [ master, pre-production, production ]
 
