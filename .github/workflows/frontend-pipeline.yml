@@ -169,7 +169,11 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Collect coverage # todo: check if we need to run this step; sonar already does this or what?
+      - name: Install backend dependencies
+        working-directory: management-express-backend
+        run: npm ci
+
+      - name: Run frontend tests with coverage # todo: check if we need to run this step; sonar already does this or what?
         working-directory: frontend
         run: npm run test -- --coverage
         #        run: |
@@ -178,9 +182,16 @@ jobs:
         env:
           CI: true
 
-      - name: Upload frontend coverage report
+        # todo: we can also have the tests for both the frontend and backend in the same step
+      - name: Run backend tests with coverage
+        working-directory: management-express-backend
+        run: npm run test:coverage
+
+      - name: Upload frontend and backend coverage report
         run: |
-          cp frontend/coverage/lcov.info .
+          cp frontend/coverage/lcov.info frontend.lcov.info  
+          cp management-express-backend/coverage/lcov.info backend.lcov.info
+        # ./backend.lcov.info
 
       - name: Run SonarCloud Scan analysis
         uses: sonarsource/sonarcloud-github-action@v5 # v4
