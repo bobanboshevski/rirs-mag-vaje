@@ -146,37 +146,75 @@ jobs:
 
   # todo: we should only add quality gate check to master branch for the backend
   # because we already have code analysis in the frontend pipeline for the whole project
+  sonar-cloud-backend-tests-and-quality-gate: # the static code analysis is done in the frontend pipeline
+    name: Backend - SonarCloud Quality Gate Check
+    needs: test-backend
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/production'
 
-#    sonar-cloud-scan-analysis:
-#      needs: test-backend
-#      runs-on: ubuntu-latest
-#      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/production'
-#
-#      steps:
-#        - name: Checkout repository
-#          uses: actions/checkout@v4
-#          with:
-#            fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis TODO: CHECK THIS
-#
-#        - name: Download backend coverage report artifact
-#          uses: actions/download-artifact@v4
-#          with:
-#            name: backend-coverage
-#            path: management-express-backend/coverage/
-#
-#        - name: Run SonarCloud Scan analysis for backend
-#          uses: sonarsource/sonarcloud-github-action@v4
-#          env:
-#            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#          with:
-#            projectBaseDir: management-express-backend
-#            args: >
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: Install backend dependencies
+        working-directory: management-express-backend
+        run: npm ci # todo: think about this: ci or install? we already cache dependencies
+
+      - name: Run backend tests with coverage
+        working-directory: management-express-backend
+        run: npm run test:coverage
+
+      - name: Upload backend coverage report
+        run: cp management-express-backend/coverage/lcov.info .
+
+      - name: SonarCloud Scan analysis (backend coverage)
+        uses: sonarsource/sonarcloud-github-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: SonarCloud Quality Gate Check
+        uses: sonarsource/sonarqube-quality-gate-action@v1
+        with:
+          timeoutMinutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  #    sonar-cloud-scan-analysis:
+  #      needs: test-backend
+  #      runs-on: ubuntu-latest
+  #      if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/production'
+  #
+  #      steps:
+  #        - name: Checkout repository
+  #          uses: actions/checkout@v4
+  #          with:
+  #            fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis TODO: CHECK THIS
+  #
+  #        - name: Download backend coverage report artifact
+  #          uses: actions/download-artifact@v4
+  #          with:
+  #            name: backend-coverage
+  #            path: management-express-backend/coverage/
+  #
+  #        - name: Run SonarCloud Scan analysis for backend
+  #          uses: sonarsource/sonarcloud-github-action@v4
+  #          env:
+  #            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #          with:
+  #            projectBaseDir: management-express-backend
+  #            args: >
 
 
 
   docker-build-push-prod:
     name: Build and push Docker image to Production
-    needs: [ test-backend ] # TODO: add sonarqube later
+    needs: [ test-backend, sonar-cloud-backend-tests-and-quality-gate ] # TODO: add sonarqube later
     runs-on: ubuntu-latest
     environment:
       name: Production

@@ -157,6 +157,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+          # With that i fixed this warning that i got in the sonarCloud Analysis: Shallow clone detected during the analysis. Some files will miss SCM information. This will affect features like auto-assignment of issues. Please configure your build to disable shallow clone.
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -186,7 +189,7 @@ jobs:
 
         # QUALITY GATE CHECK
       - name: SonarCloud Quality Gate Check
-        uses: sonarsource/sonarqube-quality-gate-action@master # v1; todo: what master means?
+        uses: sonarsource/sonarqube-quality-gate-action@v1 # v1; todo: what @master means?
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
