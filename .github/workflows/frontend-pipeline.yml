@@ -166,7 +166,7 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      - name: Collect coverage
+      - name: Collect coverage # todo: check if we need to run this step; sonar already does this or what?
         working-directory: frontend
         run: npm run test -- --coverage
         #        run: |
@@ -185,11 +185,11 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
         # QUALITY GATE CHECK
-  #      - name: SonarCloud Quality Gate Check
-  #        uses: sonarsource/sonarqube-quality-gate-action@master
-  #        timeout-minutes: 5
-  #        env:
-  #          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: SonarCloud Quality Gate Check
+        uses: sonarsource/sonarqube-quality-gate-action@master # v1; todo: what master means?
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
 
   docker-build-push-prod:
