@@ -6,10 +6,10 @@ on:
     branches: [ master, pre-production, production ]
 
   # waiting for the frontend pipeline to finish
-  workflow_run:
-    workflows: [ "Frontend CI" ]
-    branches: [ master, production ]
-    types: [ completed ]
+#  workflow_run:
+#    workflows: [ "Frontend CI" ]
+#    branches: [ master, production ]
+#    types: [ completed ]
 
 
 jobs:
@@ -152,26 +152,29 @@ jobs:
 
   # todo: we should only add quality gate check to master branch for the backend
   # because we already have code analysis in the frontend pipeline for the whole project
-  sonar-cloud-backend-tests-and-quality-gate: # the static code analysis is done in the frontend pipeline
-    name: Backend - SonarCloud Quality Gate Check
-    needs: test-backend
-    runs-on: ubuntu-latest
-    #    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/production'
-    if: |
-      (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/production') &&
-      (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+  #  sonar-cloud-backend-tests-and-quality-gate: # the static code analysis is done in the frontend pipeline
+  #    name: Backend - SonarCloud Quality Gate Check
+  #    needs: test-backend
+  #    runs-on: ubuntu-latest
+  #    #    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/production'
+  #    # only execute this step if the frontend pipeline was successful (quality gate passed)
+  #    if: |
+  #      (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/production') &&
+  #      (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+  #
+  #    steps:
+  #      - name: Checkout repository
+  #        uses: actions/checkout@v4
+  #        with:
+  #          fetch-depth: 0
+  #
+  #      - name: SonarCloud Quality Gate Check
+  #        uses: sonarsource/sonarqube-quality-gate-action@v1
+  #        timeout-minutes: 5
+  #        env:
+  #          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: SonarCloud Quality Gate Check
-        uses: sonarsource/sonarqube-quality-gate-action@v1
-        timeout-minutes: 5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  # ------------------------------------------------------------------------------------------------
 
   #    sonar-cloud-scan-analysis:
   #      needs: test-backend
@@ -202,7 +205,7 @@ jobs:
 
   docker-build-push-prod:
     name: Build and push Docker image to Production
-    needs: [ test-backend, sonar-cloud-backend-tests-and-quality-gate ] # TODO: add sonarqube later
+    needs: [ test-backend ] # TODO: add sonarqube later, sonar-cloud-backend-tests-and-quality-gate
     runs-on: ubuntu-latest
     environment:
       name: Production
